@@ -1,5 +1,7 @@
 import javax.swing.*;  
 import java.awt.event.*;  
+import java.awt.*;
+import java.util.Random;
 
 public class SquashJudge {
 
@@ -30,32 +32,40 @@ public class SquashJudge {
         final JTextField playerOneTF=new JTextField();
         final JTextField playerTwoTF=new JTextField();  
   
-        JLabel playerOneLabel, playerTwoLabel, gameTypeLabel, errorLabel;
+        JLabel playerOneLabel, playerTwoLabel, gameTypeLabel, errorLabel, welcomeMessage;
+
+        welcomeMessage=new JLabel();  
+        welcomeMessage.setBounds(55,48, 600,60);
+        welcomeMessage.setText("Welcome to SquashJudge!");   
+        welcomeMessage.setFont(new Font("Serif", Font.BOLD, 40));
+
+
 
         playerOneLabel=new JLabel();  
-        playerOneLabel.setBounds(55,48, 250,20);
-        playerOneLabel.setText("Player 1 Name");    
-        playerOneTF.setBounds(150,50, 150,20);  
+        playerOneLabel.setBounds(55,138, 250,20);
+        playerOneLabel.setText("Player 1 Name");  
+        playerOneTF.setBounds(150,140, 150,20);  
 
         playerTwoLabel=new JLabel();  
-        playerTwoLabel.setBounds(325,48, 250,20);
+        playerTwoLabel.setBounds(325,138, 250,20);
         playerTwoLabel.setText("Player 2 Name");
-        playerTwoTF.setBounds(420,50, 150,20);  
+        playerTwoTF.setBounds(420,140, 150,20);  
 
         errorLabel=new JLabel();  
-        errorLabel.setBounds(55,70, 250,20);
+        errorLabel.setBounds(55,160, 250,20);
         errorLabel.setText("Invalid names, try again.");
 
         gameTypeLabel=new JLabel();
-        gameTypeLabel.setBounds(55,100, 250,20);
+        gameTypeLabel.setBounds(55,190, 250,20);
         gameTypeLabel.setText("Game Type"); 
         String modes[]={"Manual", "Random"};        
         final JComboBox gameTypeCB=new JComboBox(modes); 
-        gameTypeCB.setBounds(150, 100,90,20);    
+        gameTypeCB.setBounds(150, 190,90,20);    
 
         JButton button = new JButton("Confirm");
-        button.setBounds(270,150,100, 40);
+        button.setBounds(270,240,100, 40);
 
+        frame.add(welcomeMessage);
         frame.add(playerOneLabel);
         frame.add(playerTwoLabel);
         frame.add(playerOneTF);
@@ -73,7 +83,7 @@ public class SquashJudge {
             public void actionPerformed(ActionEvent e) {
                 playerOneName = playerOneTF.getText();
                 playerTwoName = playerTwoTF.getText();
-                if(playerOneTF.getText().equals(playerTwoTF.getText())) 
+                if(playerOneTF.getText().equals(playerTwoTF.getText()) || playerOneTF.getText().equals("") || playerTwoTF.getText().equals(""))
                 {
                     validNames = false;
                 }
@@ -95,18 +105,34 @@ public class SquashJudge {
             }
         });
     }
+
+    static void generateGame() {
+        Random rand = new Random();
+        int pointWinner = rand.nextInt(3) + 1; // 1 or 2
+
+    }
+
     static void getInput(int pointCounter) {
         final JTextField pointWinnerTF=new JTextField();  
-        pointWinnerTF.setBounds(150,50, 150,20); 
+        pointWinnerTF.setBounds(160,150, 150,20); 
         frame.add(pointWinnerTF);
 
+
+        JLabel playerNames;
+        playerNames=new JLabel();  
+        playerNames.setBounds(55,48, 600,60);
+        playerNames.setText(playerOneName + " vs " + playerTwoName);   
+        playerNames.setFont(new Font("Serif", Font.BOLD, 40));
+        frame.add(playerNames);
+
+
         JButton button = new JButton("Next");
-        button.setBounds(270,150,100, 40);
+        button.setBounds(270,200,100, 40);
         frame.add(button);
 
         JLabel pointWinnerPrompt;
         pointWinnerPrompt=new JLabel();  
-        pointWinnerPrompt.setBounds(55,48, 250,20);
+        pointWinnerPrompt.setBounds(55, 148, 250,20);
         frame.add(pointWinnerPrompt);
 
 
@@ -121,32 +147,32 @@ public class SquashJudge {
 
         String column[]={"Scoring Method","Game #","Overall Score", "Game Score"};         
         JTable scoreTable=new JTable(scores, column);    
-        scoreTable.setBounds(30,240,500,30);
+        scoreTable.setBounds(90,290,500,30);
         frame.add(scoreTable);    
         
         String titleColumn[]={"Scoring Method","Game #","Overall Score", "Game Score"};     
         String titles[][]={ {"Scoring Method","Game #","Overall Score", "Game Score"}, };    
         JTable titlesTable=new JTable(titles, titleColumn);    
-        titlesTable.setBounds(30,225,500,15);
+        titlesTable.setBounds(90,275,500,15);
         frame.add(titlesTable);    
         
         JLabel errorLabel;
         errorLabel=new JLabel();
-        errorLabel.setBounds(55,70, 250,20);
+        errorLabel.setBounds(55,170, 250,20);
         errorLabel.setText("Invalid player name, try again.");
         frame.add(errorLabel);
         errorLabel.setVisible(false);
 
         JLabel PARJudge;
         PARJudge=new JLabel();
-        PARJudge.setBounds(55,300, 700,20);
+        PARJudge.setBounds(55,350, 700,20);
         PARJudge.setText("");
         frame.add(PARJudge);
         PARJudge.setVisible(false);
 
         JLabel HIHOJudge;
         HIHOJudge=new JLabel();
-        HIHOJudge.setBounds(55,350, 700,20);
+        HIHOJudge.setBounds(55, 400, 700,20);
         HIHOJudge.setText("");
         frame.add(HIHOJudge);
         HIHOJudge.setVisible(false);
@@ -230,6 +256,7 @@ public class SquashJudge {
                     frame.remove(button);        
                     frame.remove(scoreTable);
                     frame.remove(titlesTable);
+                    frame.remove(playerNames);
                     errorLabel.setVisible(false);       
                     getInput(pointCounter + 1);
                 }
@@ -258,18 +285,18 @@ public class SquashJudge {
 
         if(playerOnePointsPAR == 11) {
             if(playerTwoPointsPAR < 10) {
-                currentGamePAR += 1;
                 playerOneGamesWonPAR += 1;
                 if (playerOneGamesWonPAR == 3) return 5; // player one won whole match
+                currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
                 return 3; // player 1 won this game
             } 
         } else if(playerTwoPointsPAR == 11) {
             if(playerOnePointsPAR < 10) {
-                currentGamePAR += 1;
                 playerTwoGamesWonPAR += 1;
                 if (playerTwoGamesWonPAR == 3) return 6; // player two won whole match
+                currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
                 return 4; // player 2 won this game
@@ -279,9 +306,9 @@ public class SquashJudge {
         
         if (playerOnePointsPAR > 11) {
             if (playerOnePointsPAR - playerTwoPointsPAR == 2) {
-                currentGamePAR += 1;
                 playerOneGamesWonPAR += 1;
                 if (playerOneGamesWonPAR == 3) return 5; // player one won whole match
+                currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
                 return 3; // player 1 won this game
@@ -291,9 +318,9 @@ public class SquashJudge {
         }
         if (playerTwoPointsPAR > 11) {
             if (playerTwoPointsPAR - playerOnePointsPAR == 2) {
-                currentGamePAR += 1;
                 playerTwoGamesWonPAR += 1;
                 if (playerTwoGamesWonPAR == 3) return 6; // player two won whole match
+                currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
                 return 4; // player 2 won this game
@@ -325,17 +352,18 @@ public class SquashJudge {
         }
 
         if (playerOnePointsHIHO == 9) {
-            currentGameHIHO += 1;
             playerOneGamesWonHIHO += 1;
             if (playerOneGamesWonHIHO == 3) return 5; // player one won the whole match
+            currentGameHIHO += 1;
             playerOnePointsHIHO = 0;
             playerTwoPointsHIHO = 0;
             currentServer = "";
             return 3; // player one won this game
         } else if (playerTwoPointsHIHO == 9) {
-            currentGameHIHO += 1;
             playerTwoGamesWonHIHO += 1;
             if (playerTwoGamesWonHIHO == 3) return 6; // player two won the whole match
+        
+            currentGameHIHO += 1;
             playerOnePointsHIHO = 0;
             playerTwoPointsHIHO = 0;
             currentServer = "";
