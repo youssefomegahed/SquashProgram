@@ -11,6 +11,7 @@ public class SquashJudge {
     public static JFrame frame = new JFrame();
     public static int returnedValuePAR = 0;
     public static int returnedValueHIHO = 0;
+    public static boolean PARGameDone = false;
     public static int playerOnePointsPAR = 0;
     public static int playerTwoPointsPAR = 0;
     public static int currentGamePAR = 1;
@@ -18,7 +19,7 @@ public class SquashJudge {
     public static int playerTwoGamesWonPAR = 0;
 
     
-
+    public static boolean HIHOGameDone = false;
     public static int playerOnePointsHIHO = 0;
     public static int playerTwoPointsHIHO = 0;
     public static String currentServer;
@@ -119,6 +120,8 @@ public class SquashJudge {
         Random rand = new Random();
         int pointWinner = rand.nextInt(3) + 1; // 1 or 2
 
+
+        //while (returnedValueHIHO != -2 && returnedValueHIHO != -2) run processHIHO and PAR on the randomized winning player
         String data[][]={ {"1","1","W","L"},    
                           {"1","2","W","L"},    
                           {"1","3","W","L"}};    
@@ -206,7 +209,7 @@ public class SquashJudge {
             public void actionPerformed(ActionEvent e) {
                 if (playerOneName.equals(pointWinnerTF.getText())) {
 
-                    if (returnedValuePAR != -2)
+                    if (returnedValuePAR != -2 && !PARGameDone)
                     {
                         returnedValuePAR = processPAR(playerOneName);
                         if ((returnedValuePAR == 5) || (returnedValuePAR == 6)) {
@@ -220,7 +223,7 @@ public class SquashJudge {
                         }
                     }
 
-                    if (returnedValueHIHO != -2) {
+                    if (returnedValueHIHO != -2 && !HIHOGameDone) {
                         returnedValueHIHO = processHIHO(playerOneName);
                         if ((returnedValueHIHO == 5) || (returnedValueHIHO == 6)) {
                             returnedValueHIHO = -2;
@@ -233,27 +236,27 @@ public class SquashJudge {
                         }
                     }
                 } else if (playerTwoName.equals(pointWinnerTF.getText())) {
-                    if (returnedValuePAR != -2)
+                    if (returnedValuePAR != -2 && !PARGameDone)
                     {
                         returnedValuePAR = processPAR(playerTwoName);
                         if ((returnedValuePAR == 5) || (returnedValuePAR == 6)) {
                             returnedValuePAR = -2; // PAR game has ended
                             PARJudge.setText("According to PAR Judge, " + 
                             playerTwoName + " won the match with " + 
-                            Integer.toString(playerTwoGamesWonPAR) + "-" + 
-                            Integer.toString(playerOneGamesWonPAR) +
+                            Integer.toString(playerOneGamesWonPAR) + "-" + 
+                            Integer.toString(playerTwoGamesWonPAR) +
                             " Games");
                             PARJudge.setVisible(true);
                         }
                     }
-                    if (returnedValueHIHO != -2) {
+                    if (returnedValueHIHO != -2 && !HIHOGameDone) {
                         returnedValueHIHO = processHIHO(playerTwoName);
                         if ((returnedValueHIHO == 5) || (returnedValueHIHO == 6)) {
                             returnedValueHIHO = -2;
                             HIHOJudge.setText("According to HIHO Judge, " + 
                             playerTwoName + " won the match with " + 
-                            Integer.toString(playerTwoGamesWonHIHO) + "-" + 
-                            Integer.toString(playerOneGamesWonHIHO) +
+                            Integer.toString(playerOneGamesWonHIHO) + "-" + 
+                            Integer.toString(playerTwoGamesWonHIHO) +
                             " Games");
                             HIHOJudge.setVisible(true);
                         }
@@ -312,6 +315,11 @@ public class SquashJudge {
                 currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
+                if (!HIHOGameDone) PARGameDone = true;
+                else {
+                    PARGameDone = false;
+                    HIHOGameDone = false;
+                }
                 return 3; // player 1 won this game
             } 
         } else if(playerTwoPointsPAR == 11) {
@@ -321,6 +329,11 @@ public class SquashJudge {
                 currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
+                if (!HIHOGameDone) PARGameDone = true;
+                else {
+                    PARGameDone = false;
+                    HIHOGameDone = false;
+                }
                 return 4; // player 2 won this game
             } 
             
@@ -333,6 +346,11 @@ public class SquashJudge {
                 currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
+                if (!HIHOGameDone) PARGameDone = true;
+                else {
+                    PARGameDone = false;
+                    HIHOGameDone = false;
+                }
                 return 3; // player 1 won this game
             } else if (playerOnePointsPAR - playerTwoPointsPAR == 1) {
                 return 1; 
@@ -345,6 +363,11 @@ public class SquashJudge {
                 currentGamePAR += 1;
                 playerOnePointsPAR = 0;
                 playerTwoPointsPAR = 0;
+                if (!HIHOGameDone) PARGameDone = true;
+                else {
+                    PARGameDone = false;
+                    HIHOGameDone = false;
+                }
                 return 4; // player 2 won this game
             } else if (playerTwoPointsPAR - playerOnePointsPAR == 1) {
                 return 2; 
@@ -380,6 +403,11 @@ public class SquashJudge {
             playerOnePointsHIHO = 0;
             playerTwoPointsHIHO = 0;
             currentServer = "";
+            if (!PARGameDone) HIHOGameDone = true;
+                else {
+                    PARGameDone = false;
+                    HIHOGameDone = false;
+                }
             return 3; // player one won this game
         } else if (playerTwoPointsHIHO == 9) {
             playerTwoGamesWonHIHO += 1;
@@ -389,6 +417,11 @@ public class SquashJudge {
             playerOnePointsHIHO = 0;
             playerTwoPointsHIHO = 0;
             currentServer = "";
+            if (!PARGameDone) HIHOGameDone = true;
+                else {
+                    PARGameDone = false;
+                    HIHOGameDone = false;
+                }
             return 4; // player one won this game
         }
 
