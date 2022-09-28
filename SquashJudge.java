@@ -3,6 +3,7 @@ import java.awt.event.*;
 import java.awt.*;
 import java.util.Random;
 
+
 public class SquashJudge {
 
     public static String playerOneName, playerTwoName, gameType;
@@ -58,7 +59,8 @@ public class SquashJudge {
         gameTypeLabel=new JLabel();
         gameTypeLabel.setBounds(55,190, 250,20);
         gameTypeLabel.setText("Game Type"); 
-        String modes[]={"Manual", "Random"};        
+        String modes[]={"Manual", "Random"};       
+        frame.setTitle("SquashJudge"); 
         final JComboBox gameTypeCB=new JComboBox(modes); 
         gameTypeCB.setBounds(150, 190,90,20);    
 
@@ -96,7 +98,7 @@ public class SquashJudge {
                 } else if ((gameTypeCB.getItemAt(gameTypeCB.getSelectedIndex()) == gameTypeCB.getItemAt(1)) && validNames == true) {
                     frame.getContentPane().removeAll();
                     frame.repaint();
-                    // generateGame();
+                    generateGame();
                 } else {
                     errorLabel.setVisible(true);
                     validNames = true;
@@ -107,8 +109,28 @@ public class SquashJudge {
     }
 
     static void generateGame() {
+        JLabel playerNames;
+        playerNames=new JLabel();  
+        playerNames.setBounds(30,25, 600,60);
+        playerNames.setText(playerOneName + " vs " + playerTwoName);   
+        playerNames.setFont(new Font("Serif", Font.BOLD, 40));
+        frame.add(playerNames);
+
         Random rand = new Random();
         int pointWinner = rand.nextInt(3) + 1; // 1 or 2
+
+        String data[][]={ {"1","1","W","L"},    
+                          {"1","2","W","L"},    
+                          {"1","3","W","L"}};    
+        String column[]={"Game #","Round #",playerOneName, playerTwoName};         
+        JTable jt=new JTable(data,column);    
+       // jt.setBounds(30,40,200,800);          
+        JScrollPane sp=new JScrollPane(jt);  
+        sp.setBounds(30,90,600,550);
+        frame.add(sp);          
+        
+       
+
 
     }
 
