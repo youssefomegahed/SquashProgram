@@ -2,13 +2,19 @@ import javax.swing.*;
 import java.awt.event.*;  
 import java.awt.*;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import static java.lang.Math.max;
 
 
 public class SquashJudge {
 
+
     public static String playerOneName, playerTwoName, gameType;
-    public static boolean validNames = true;
+    public static boolean validNames = true
+    ;
     public static JFrame frame = new JFrame();
+
     public static int returnedValuePAR = 0;
     public static int returnedValueHIHO = 0;
     public static boolean PARGameDone = false;
@@ -27,6 +33,9 @@ public class SquashJudge {
     public static int playerOneGamesWonHIHO = 0;
     public static int playerTwoGamesWonHIHO = 0;
 
+    public static List<List<String>> rowData = new ArrayList<List<String>>();
+    public static List<String> tempList = new ArrayList<String>();
+    public static int counter = 1;
 
 
 
@@ -112,25 +121,129 @@ public class SquashJudge {
     static void generateGame() {
         JLabel playerNames;
         playerNames=new JLabel();  
-        playerNames.setBounds(30,25, 600,60);
+        playerNames.setBounds(55,25, 600,60);
         playerNames.setText(playerOneName + " vs " + playerTwoName);   
         playerNames.setFont(new Font("Serif", Font.BOLD, 40));
         frame.add(playerNames);
 
+        JLabel PARJudge;
+        PARJudge=new JLabel();
+        PARJudge.setBounds(55,90, 650,20);
+        PARJudge.setText("");
+        frame.add(PARJudge);
+        PARJudge.setVisible(false);
+
+        JLabel HIHOJudge;
+        HIHOJudge=new JLabel();
+        HIHOJudge.setBounds(55, 130, 650,20);
+        HIHOJudge.setText("");
+        frame.add(HIHOJudge);
+        HIHOJudge.setVisible(false);
+
         Random rand = new Random();
-        int pointWinner = rand.nextInt(3) + 1; // 1 or 2
+        int pointWinner;
+        int currentGame;
+        
+
+        int counter = 1;
+        
+        while (true) {
+
+            if ((returnedValuePAR == -2 && returnedValueHIHO == -2)) break;
+
+            pointWinner = rand.nextInt(2) + 1; // 1 or 2
 
 
-        //while (returnedValueHIHO != -2 && returnedValueHIHO != -2) run processHIHO and PAR on the randomized winning player
-        String data[][]={ {"1","1","W","L"},    
-                          {"1","2","W","L"},    
-                          {"1","3","W","L"}};    
+            if(pointWinner == 1) {
+                if (returnedValuePAR != -2 && !PARGameDone) returnedValuePAR = processPAR(playerOneName);
+                
+                if (returnedValueHIHO != -2 && !HIHOGameDone) returnedValueHIHO = processHIHO(playerOneName);
+                    if((returnedValuePAR == 5) || (returnedValuePAR == 6)) {
+                        returnedValuePAR = -2;
+                        PARGameDone = true;
+                        HIHOGameDone = false;
+                        PARJudge.setText("According to PAR Judge, " + 
+                        playerOneName + " won the match with " + 
+                        Integer.toString(playerOneGamesWonPAR) + "-" + 
+                        Integer.toString(playerTwoGamesWonPAR) +
+                        " Games");
+                        PARJudge.setVisible(true);
+                    }
+                    
+                    if((returnedValueHIHO == 5) || (returnedValueHIHO == 6)) {
+                        returnedValueHIHO = -2;
+                        HIHOGameDone = true;
+                        PARGameDone = false;
+                        HIHOJudge.setText("According to HIHO Judge, " + 
+                        playerOneName + " won the match with " + 
+                        Integer.toString(playerOneGamesWonHIHO) + "-" + 
+                        Integer.toString(playerTwoGamesWonHIHO) +
+                        " Games");
+                        HIHOJudge.setVisible(true);
+                    } 
+
+           } else {
+                if (returnedValuePAR != -2 && !PARGameDone) returnedValuePAR = processPAR(playerTwoName);
+                if (returnedValueHIHO != -2 && !HIHOGameDone) returnedValueHIHO = processHIHO(playerTwoName);
+
+                    if((returnedValuePAR == 5) || (returnedValuePAR == 6)) {
+                        returnedValuePAR = -2;
+                        PARGameDone = true;
+                        HIHOGameDone = false;
+                        PARJudge.setText("According to PAR Judge, " + 
+                        playerTwoName + " won the match with " + 
+                        Integer.toString(playerOneGamesWonPAR) + "-" + 
+                        Integer.toString(playerTwoGamesWonPAR) +
+                        " Games");
+                        PARJudge.setVisible(true);
+                    }
+
+                    if((returnedValueHIHO == 5) || (returnedValueHIHO == 6)) {
+                        returnedValueHIHO = -2;
+                        HIHOGameDone = true;
+                        PARGameDone = false;
+                        HIHOJudge.setText("According to HIHO Judge, " + 
+                        playerTwoName + " won the match with " + 
+                        Integer.toString(playerOneGamesWonHIHO) + "-" + 
+                        Integer.toString(playerTwoGamesWonHIHO) +
+                        " Games");
+                        HIHOJudge.setVisible(true);
+                    }
+              
+            
+           }
+
+           currentGame = max(currentGamePAR, currentGameHIHO);
+           tempList.add(Integer.toString(currentGame));
+           
+           tempList.add(Integer.toString(counter));
+
+
+           if (pointWinner == 1) {
+                tempList.add("W");
+                tempList.add("L");
+              
+           } else {
+                tempList.add("L");
+                tempList.add("W");
+           }
+
+           rowData.add(tempList);
+           tempList = new ArrayList<String>();
+           counter++;
+           
+
+    }
+
+
+        // the rows entry in the JTable element takes a regular 2D array. This is a conversion from the dynamic 2D ArrayList to a regular 2D array
+        String[][] gameData = rowData.stream().map(l -> l.stream().toArray(String[]::new)).toArray(String[][]::new);
+         
         String column[]={"Game #","Round #",playerOneName, playerTwoName};         
-        JTable jt=new JTable(data,column);    
-       // jt.setBounds(30,40,200,800);          
-        JScrollPane sp=new JScrollPane(jt);  
-        sp.setBounds(30,90,600,550);
-        frame.add(sp);          
+        JTable randomGameTable=new JTable(gameData,column);    
+        JScrollPane scrollPane=new JScrollPane(randomGameTable);  
+        scrollPane.setBounds(30,180,600,400);
+        frame.add(scrollPane);          
         
        
 
@@ -141,7 +254,6 @@ public class SquashJudge {
         final JTextField pointWinnerTF=new JTextField();  
         pointWinnerTF.setBounds(160,150, 150,20); 
         frame.add(pointWinnerTF);
-
 
         JLabel playerNames;
         playerNames=new JLabel();  
@@ -275,6 +387,8 @@ public class SquashJudge {
                     frame.remove(button);
         
                 } else { //can do processing on each returned value later for printing
+                    
+
                     pointWinnerTF.setText("");
                     frame.remove(pointWinnerPrompt);
                     frame.remove(pointWinnerTF);
@@ -282,10 +396,14 @@ public class SquashJudge {
                     frame.remove(scoreTable);
                     frame.remove(titlesTable);
                     frame.remove(playerNames);
-                    errorLabel.setVisible(false);       
+                    errorLabel.setVisible(false);  
+                    counter++;     
                     getInput(pointCounter + 1);
                 }
             }
+
+            int prevP1PointsPAR = playerOnePointsPAR;
+            int prevP2PointsPAR = playerTwoGamesWonPAR;
 
         });
 
